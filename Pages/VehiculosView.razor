@@ -1,0 +1,120 @@
+@page "/Car"
+@using Models
+
+<PageTitle>Listar Vehiculos</PageTitle>
+
+<h1>Listar Vehiculos</h1>
+<hr>
+
+<label for="">Marca</label>
+<input @bind="SelecCar.Marca" type="text" name="" id="">
+
+<label for="">Modelo</label>
+<input @bind="SelecCar.Modelo" type="text" name="" id="">
+
+<label for="">Año</label>
+<input @bind="SelecCar.Año" type="datatime" name="" id="">
+<br>
+<br>
+<label for="">Color</label>
+<input @bind="SelecCar.Color" type="text" name="" id="">
+
+<button @onclick="Guardar" class="btn btn-success" ><span class="oi oi-plus"></span>
+</button>
+<button @onclick="clean" class="btn btn-warning">Refresh</button>
+
+<table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Año</th>
+                <th>Color</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var Vehiculo in vehiculos)
+            {
+                <tr>
+                    <td>@Vehiculo.VehiculoID</td>
+                    <td>@Vehiculo.Marca</td>
+                    <td>@Vehiculo.Modelo</td>
+                    <td>@Vehiculo.Año</td>
+                    <td>@Vehiculo.Color</td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="btn btn-warning" @onclick="()=>Editar(Vehiculo.VehiculoID)">
+                                <span class="oi oi-pencil"></span>
+                            </button>
+                            
+                            <button class="btn btn-danger" @onclick="()=>Eliminar(Vehiculo.VehiculoID)">
+                                <span class="oi oi-trash"></span>
+                            </button>
+                        </div>
+                    </td>    
+                </tr>
+            }
+        </tbody>
+    </table>
+
+@code
+{
+    public Vehiculo SelecCar {get; set;} = new Vehiculo();
+
+    public List<Vehiculo>? vehiculos {get; set;} 
+    = new List<Vehiculo>()
+    {
+        new Vehiculo()
+        {
+            VehiculoID=1,
+            Marca="Toyota",
+            Modelo="Corolla",
+            Año=2022,
+            Color="Blanco",
+        },
+    };
+
+    void Editar(int Id)
+    {
+        SelecCar = vehiculos!.FirstOrDefault(p => p.VehiculoID == Id) ?? new Vehiculo();
+    }
+    void Eliminar(int Id)
+    {
+        SelecCar = vehiculos!.FirstOrDefault(p => p.VehiculoID == Id);
+        if (SelecCar != null)
+        {
+            vehiculos!.Remove(SelecCar);
+            SelecCar = new Vehiculo();
+        }
+    }
+    void Guardar()
+    {
+        if (
+        !string.IsNullOrEmpty(SelecCar.Marca) &&
+        !string.IsNullOrEmpty(SelecCar.Modelo) &&
+        !string.IsNullOrEmpty(SelecCar.Año.ToString()) &&
+        !string.IsNullOrEmpty(SelecCar.Color)
+        )
+        {
+            if (SelecCar.VehiculoID == 0)
+            {
+                SelecCar.VehiculoID = 
+                vehiculos.Count>0? (vehiculos!.Max(p => p.VehiculoID) + 1) : 1;
+                vehiculos!.Add(SelecCar);
+                SelecCar = new Vehiculo();
+                return;
+            }
+            var indice = vehiculos!.FindIndex(p => p.VehiculoID == SelecCar.VehiculoID);
+            vehiculos![indice] = SelecCar;
+            SelecCar = new Vehiculo();
+        }
+    }
+    void clean()
+    {
+        SelecCar.Marca="";
+        SelecCar.Modelo="";
+        SelecCar.Año.ToString("0");
+        SelecCar.Modelo="";
+    }
+}
