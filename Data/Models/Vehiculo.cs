@@ -1,4 +1,6 @@
-namespace Models;
+using System.ComponentModel.DataAnnotations;
+
+namespace Vehiculo20200288.Data.Models;
 
 public class Vehiculo
 {

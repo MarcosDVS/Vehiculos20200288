@@ -1,5 +1,5 @@
 @page "/Car"
-@using Models
+@using Vehiculo20200288.Data.Models
 
 <PageTitle>Listar Vehiculos</PageTitle>
 
@@ -34,7 +34,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var Vehiculo in vehiculos)
+            @foreach (var Vehiculo in vehiculos=null!)
             {
                 <tr>
                     <td>@Vehiculo.VehiculoID</td>
@@ -112,9 +112,9 @@
     }
     void clean()
     {
-        SelecCar.Marca="";
-        SelecCar.Modelo="";
+        SelecCar.Marca= string.Empty;
+        SelecCar.Modelo=string.Empty;
         SelecCar.Año.ToString("0");
-        SelecCar.Modelo="";
+        SelecCar.Modelo=string.Empty;
     }
 }
