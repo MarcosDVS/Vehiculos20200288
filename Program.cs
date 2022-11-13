@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
-builder.Services.AddSqlite<VEHICULO20200288DbContext>("Data Source=.//Data//Context//VEHICULO20200288Db.sqlite");
+builder.Services.AddSqlite<VEHICULO20200288DbContext>("Data Source=.//Data//Context//VEHICULO20200288.sqlite");
 builder.Services.AddScoped <IVEHICULO20200288DbContext,VEHICULO20200288DbContext>();
 
 
@@ -23,16 +23,6 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
-using (var scope = scopeFactory.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<VEHICULO20200288DbContext>();
-    if (db.Database.EnsureCreated())
-    {
-        
-    }
-}
-
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
@@ -42,4 +32,13 @@ app.UseRouting();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
+var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
+using (var scope = scopeFactory.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<VEHICULO20200288DbContext>();
+    if (db.Database.EnsureCreated())
+    {
+        
+    }
+}
 app.Run();

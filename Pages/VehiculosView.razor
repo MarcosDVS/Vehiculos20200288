@@ -1,5 +1,6 @@
 @page "/Car"
 @using Vehiculo20200288.Data.Models
+@using Vehiculo20200288.Data
 
 <PageTitle>Listar Vehiculos</PageTitle>
 
@@ -34,7 +35,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var Vehiculo in vehiculos=null!)
+            @foreach (var Vehiculo in vehiculos)
             {
                 <tr>
                     <td>@Vehiculo.VehiculoID</td>
@@ -61,7 +62,7 @@
 @code
 {
     public Vehiculo SelecCar {get; set;} = new Vehiculo();
-
+    
     public List<Vehiculo>? vehiculos {get; set;} 
     = new List<Vehiculo>()
     {
