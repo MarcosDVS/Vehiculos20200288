@@ -1,12 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using Vehiculo20200288.Data.Context;
 
 namespace Vehiculo20200288.Data.Models;
 
 
 public class Vehiculo
 {
-    [Key]
-    public int VehiculoID { get; set; }
+    [Key] public int VehiculoID { get; set; }
     public string Marca { get; set; } = null!;
     public string Modelo { get; set; } = null!;
     public int Año { get; set; }

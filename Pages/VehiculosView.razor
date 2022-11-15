@@ -1,5 +1,6 @@
 @page "/Car"
 @using Vehiculo20200288.Data.Models
+@using Vehiculo20200288.Data.Services
 @using Vehiculo20200288.Data
 
 <PageTitle>Listar Vehiculos</PageTitle>
@@ -75,40 +76,48 @@
             Color="Blanco",
         },
     };
+    async Task Cargar()
+    {
+        var r = await VehiculoService.Consultar();
+        if(r.Succeeded) vehiculos = r.Data;
+    }
+     protected async override Task OnInitializedAsync()
+    {
+        await Cargar();
+    }
 
+    
     void Editar(int Id)
     {
         SelecCar = vehiculos!.FirstOrDefault(p => p.VehiculoID == Id) ?? new Vehiculo();
     }
-    void Eliminar(int Id)
+    async Task Eliminar(int Id)
     {
-        SelecCar = vehiculos!.FirstOrDefault(p => p.VehiculoID == Id);
-        if (SelecCar != null)
-        {
-            vehiculos!.Remove(SelecCar);
-            SelecCar = new Vehiculo();
-        }
+        await VehiculoService.Eliminar(Id);
+        await Cargar();
     }
-    void Guardar()
+
+    async Task Guardar()
     {
-        if (
-        !string.IsNullOrEmpty(SelecCar.Marca) &&
-        !string.IsNullOrEmpty(SelecCar.Modelo) &&
-        !string.IsNullOrEmpty(SelecCar.Año.ToString()) &&
-        !string.IsNullOrEmpty(SelecCar.Color)
+        if(
+        !string.IsNullOrEmpty(SelecCar!.Marca) &&
+        !string.IsNullOrEmpty(SelecCar!.Modelo) &&
+        !string.IsNullOrEmpty(SelecCar!.Color)
         )
         {
-            if (SelecCar.VehiculoID == 0)
-            {
-                SelecCar.VehiculoID = 
-                vehiculos.Count>0? (vehiculos!.Max(p => p.VehiculoID) + 1) : 1;
-                vehiculos!.Add(SelecCar);
-                SelecCar = new Vehiculo();
-                return;
-            }
-            var indice = vehiculos!.FindIndex(p => p.VehiculoID == SelecCar.VehiculoID);
-            vehiculos![indice] = SelecCar;
-            SelecCar = new Vehiculo();
+           if(SelecCar.VehiculoID==0)
+           {
+            await VehiculoService.Crear(
+            SelecCar!.Marca,
+            SelecCar!.Modelo,
+            SelecCar!.Año,
+            SelecCar!.Color
+            );
+            return;
+           }
+            //Codigo para editar
+           
+            await Cargar();
         }
     }
     void clean()
