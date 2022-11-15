@@ -1,7 +1,6 @@
 @page "/Car"
 @using Vehiculo20200288.Data.Models
 @using Vehiculo20200288.Data.Services
-@using Vehiculo20200288.Data
 
 <PageTitle>Listar Vehiculos</PageTitle>
 
@@ -9,17 +8,17 @@
 <hr>
 
 <label for="">Marca</label>
-<input @bind="SelecCar.Marca" type="text" name="" id="">
+<input @bind="SelectCar.Marca" type="text" name="" id="">
 
 <label for="">Modelo</label>
-<input @bind="SelecCar.Modelo" type="text" name="" id="">
+<input @bind="SelectCar.Modelo" type="text" name="" id="">
 
 <label for="">Año</label>
-<input @bind="SelecCar.Año" type="datatime" name="" id="">
+<input @bind="SelectCar.Año" type="number" >
 <br>
 <br>
 <label for="">Color</label>
-<input @bind="SelecCar.Color" type="text" name="" id="">
+<input @bind="SelectCar.Color" type="text" name="" id="">
 
 <button @onclick="Guardar" class="btn btn-success" ><span class="oi oi-plus"></span>
 </button>
@@ -36,7 +35,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var Vehiculo in vehiculos)
+            @foreach (var Vehiculo in Vehiculos)
             {
                 <tr>
                     <td>@Vehiculo.VehiculoID</td>
@@ -60,71 +59,79 @@
         </tbody>
     </table>
 
-@code
+@code 
 {
-    public Vehiculo SelecCar {get; set;} = new Vehiculo();
-    
-    public List<Vehiculo>? vehiculos {get; set;} 
+    //Llama la clase Vehiculo asignandole una variable 
+    public Vehiculo? SelectCar { get; set; } = new Vehiculo();
+
+    //List<Vehiculo> es un arreglo de la clase Vehiculo al cual se le asigno el
+        //nombe Vehiculos para interactuar con el arreglo
+    public List<Vehiculo>? Vehiculos { get; set; }
     = new List<Vehiculo>()
     {
-        new Vehiculo()
-        {
-            VehiculoID=1,
-            Marca="Toyota",
-            Modelo="Corolla",
-            Año=2022,
-            Color="Blanco",
+        //Introduce datos en el arreglo mediante codigo
+        new Vehiculo(){
+        VehiculoID = 1,
+        Marca= "Toyota",
+        Modelo = "Camry",
+        Año = 2022,
+        Color = "Blanco"
+        },
+        new Vehiculo(){
+        VehiculoID = 2,
+        Marca= "Honda",
+        Modelo = "Civic",
+        Año = 2016,
+        Color = "Negro"
         },
     };
-    async Task Cargar()
-    {
-        var r = await VehiculoService.Consultar();
-        if(r.Succeeded) vehiculos = r.Data;
-    }
-     protected async override Task OnInitializedAsync()
-    {
-        await Cargar();
-    }
-
-    
     void Editar(int Id)
     {
-        SelecCar = vehiculos!.FirstOrDefault(p => p.VehiculoID == Id) ?? new Vehiculo();
-    }
-    async Task Eliminar(int Id)
-    {
-        await VehiculoService.Eliminar(Id);
-        await Cargar();
+        //Edita el vehiculo seleccionado
+        SelectCar = Vehiculos!.FirstOrDefault(p => p.VehiculoID == Id) ?? new Vehiculo();
     }
 
-    async Task Guardar()
+    void Eliminar(int Id)
     {
-        if(
-        !string.IsNullOrEmpty(SelecCar!.Marca) &&
-        !string.IsNullOrEmpty(SelecCar!.Modelo) &&
-        !string.IsNullOrEmpty(SelecCar!.Color)
-        )
+        SelectCar = Vehiculos!.FirstOrDefault(p => p.VehiculoID == Id);
+        if (SelectCar != null)
         {
-           if(SelecCar.VehiculoID==0)
-           {
-            await VehiculoService.Crear(
-            SelecCar!.Marca,
-            SelecCar!.Modelo,
-            SelecCar!.Año,
-            SelecCar!.Color
-            );
-            return;
-           }
-            //Codigo para editar
-           
-            await Cargar();
+            //Elimina el vehiculo seleccionado
+            Vehiculos!.Remove(SelectCar);
+            SelectCar = new Vehiculo();
         }
     }
+
+    void Guardar()
+    {
+        if (
+        !string.IsNullOrEmpty(SelectCar!.Marca) &&
+        !string.IsNullOrEmpty(SelectCar!.Modelo) &&
+        !string.IsNullOrEmpty(SelectCar!.Color)
+        )
+        {
+            if (SelectCar.VehiculoID == 0)
+            {
+                //Asigna un Id a cada vehiculo
+                SelectCar.VehiculoID = 
+                Vehiculos.Count>0? (Vehiculos!.Max(p => p.VehiculoID) + 1) : 1;
+                //Agrega los vehiculos a la clase
+                Vehiculos!.Add(SelectCar);
+                SelectCar = new Vehiculo();
+                return;
+            }
+            var indice = Vehiculos!.FindIndex(p => p.VehiculoID == SelectCar.VehiculoID);
+            Vehiculos![indice] = SelectCar;
+            SelectCar = new Vehiculo();
+        }
+    }
+
     void clean()
     {
-        SelecCar.Marca= string.Empty;
-        SelecCar.Modelo=string.Empty;
-        SelecCar.Año.ToString("0");
-        SelecCar.Modelo=string.Empty;
+        SelectCar.Marca= string.Empty;
+        SelectCar.Modelo=string.Empty;
+        SelectCar.Año=2002;
+        SelectCar.Modelo=string.Empty;
     }
+
 }

@@ -4,20 +4,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Vehiculo20200288.Data.Services;
 
-public class VehiculoService:IVehiculoService
+public class VehiculoService : IVehiculoService
 {
-    private readonly VEHICULO20200288DbContext _context;
+    private readonly IVEHICULO20200288DbContext _context;
 
-    public VehiculoService(VEHICULO20200288DbContext context)
+    public VehiculoService(IVEHICULO20200288DbContext context)
     {
         _context = context;
     }
 
-    public async Task<Result<int>> Crear(string marca, string modelo, int año, string color)
+    public async Task<Result<int>> Crear(string marca, string modelo, int year, string color)
     {
         try
         {
-            var vehiculo = Vehiculo.Crear(marca, modelo, año, color);
+            var vehiculo = Vehiculo.Crear(marca, modelo, year, color);
             _context.Vehiculos.Add(vehiculo);
             await _context.SaveChangesAsync();
             return Result<int>.Success(vehiculo.VehiculoID);
@@ -44,11 +44,11 @@ public class VehiculoService:IVehiculoService
         }
     }
 
-    public async Task Editar(int Id,string marca, string modelo, int año, string color){
+    public async Task Editar(int Id,string marca, string modelo, int year, string color){
         var vehiculo = await _context.Vehiculos
         .FirstOrDefaultAsync(p=>p.VehiculoID == Id);
         if(vehiculo!=null){
-        vehiculo.Update(marca,modelo,año,color);
+        vehiculo.Update(marca,modelo,year,color);
         await _context.SaveChangesAsync();
         }
     }
@@ -64,8 +64,8 @@ public class VehiculoService:IVehiculoService
 
 public interface IVehiculoService
 {
-    public Task<Result<int>> Crear(string marca, string modelo, int año, string color);
+    public Task<Result<int>> Crear(string marca, string modelo, int year, string color);
     public Task<Result<List<Vehiculo>>> Consultar(string filtro = "");
-    public Task Editar(int Id, string marca, string modelo, int año, string color);
+    public Task Editar(int Id,string marca, string modelo, int year, string color);
     public Task Eliminar(int Id);
 }

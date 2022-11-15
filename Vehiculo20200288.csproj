@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <!--Estas etiquetas son necesarias para crear MyDb.sqlite-->
   <ItemGroup>
   	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.7" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.7" />
