@@ -1,0 +1,53 @@
+@page "/vehiculo"
+
+<h1>Vehiculos</h1>
+<div class="row">
+    <div class="col">
+        <input type="text" @bind="Filtro">
+    </div>
+    <div class="col">
+        <button class="btn btn-primary" @onclick="()=>Consultar()">Buscar</button>
+        <button class="btn btn-secondary" @onclick="Nuevo">+</button>
+    </div>
+</div>
+<table class="table">
+    <thead>
+        <th>ID</th>
+        <th>Marca</th>
+        <th>Modelo</th>
+        <th>Color</th>
+        <th>Año</th>
+    </thead>
+    <tbody>
+        @foreach (var Vehiculo in Vehiculos)
+        {
+            <tr>
+                <td>@Vehiculo.VehiculoID</td>
+                <td>@Vehiculo.Marca</td>
+                <td>@Vehiculo.Modelo</td>
+                <td>@Vehiculo.Color</td>
+                <td>@Vehiculo.Año</td>
+            </tr>
+        }
+    </tbody> 
+</table>
+
+@code
+{
+    public string Filtro { get; set; } = "";
+    public List<VehiculoRecord> Vehiculos { get; set; } = new List<VehiculoRecord>();
+        void Nuevo(){
+            urlHelper.NavigateTo("/vehiculo/crear");
+        }
+    public async Task<bool> Consultar()
+    {
+        var response = await VehiculoService.Consultar(Filtro);
+        if(response.Exitoso)
+            Vehiculos = response.Datos!;
+        return true;
+    }
+    protected async override Task OnInitializedAsync()
+    {
+        await Consultar();
+    }
+}

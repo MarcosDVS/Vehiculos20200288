@@ -1,0 +1,49 @@
+@page "/vehiculo/crear"
+@using Vehiculo20200288.Data.Models
+@using Microsoft.EntityFrameworkCore
+@using Vehiculo20200288.Data.Services
+
+<PageTitle>Registrar Vehiculos</PageTitle>
+<h1>Registrar Vehiculos</h1>
+
+<EditForm Model="@Datos" OnInvalidSubmit="Registrar">
+<DataAnnotationsValidator/>
+<ValidationSummary />
+<div class="row">
+    <div class="col">
+        <label for="txtMarca">Marca</label>
+        <InputText id="txtMarca" class="form-control" @bind-Value="Datos.Marca"/>
+    </div>
+    <div class="col">
+        <label for="txtModelo">Modelo</label>
+        <InputText id="txtModelo" class="form-control" @bind-Value="Datos.Modelo"/>
+    </div>
+    <div class="col">
+        <label for="txtColor">Color</label>
+        <InputText id="txtColor" class="form-control" @bind-Value="Datos.Color"/>
+    </div>
+    <div class="col">
+        <label for="txtAño">Año</label>
+        <InputNumber id="txtAño" class="form-control" @bind-Value="Datos.Año" />
+    </div>
+</div>
+<div class="row mt-3">
+    <button class="btn btn-success" type="submit">Registrar</button>
+</div>
+</EditForm>
+
+@code 
+{
+    public VehiculoRequest Datos { get; set; } = new VehiculoRequest();
+
+    public async void Registrar()
+    {
+        var response = await VehiculoService.Registrar(Datos);
+        if(response.Exitoso){
+            var Id = response.Datos;
+            Console.WriteLine(Id);
+            urlHelper.NavigateTo("/vehiculo");
+        }
+        else Console.WriteLine(response.Mensaje);
+    }
+}

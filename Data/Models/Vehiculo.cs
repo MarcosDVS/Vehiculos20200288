@@ -1,34 +1,26 @@
 using System.ComponentModel.DataAnnotations;
 using Vehiculo20200288.Data.Context;
+using Vehiculo20200288.Request;
 
 namespace Vehiculo20200288.Data.Models;
 
 
 public class Vehiculo
 {
-    [Key]
-    public int VehiculoID { get; set; }
+    [Key]//Clave primaria de la base de datos
+    public int VehiculoID { get; set; } 
+    [Required, MaxLength(100)]//Campo obligatorio, máximo de caracteres 100.
     public string Marca { get; set; } = null!;
+    [Required, MaxLength(100)]//Campo obligatorio, máximo de caracteres 100.
     public string Modelo { get; set; } = null!;
     public int Año { get; set; } = 2002;
     public string Color { get; set; } = null!;
-
-    public static Vehiculo Crear(string marca, string modelo, int year, string color)
+    //Para crear una variable tipo contacto, se utiliza el request para recibir los datos.
+    public static Vehiculo Crear(VehiculoRequest datos) => new()
     {
-        return new Vehiculo(){
-            VehiculoID = 0,
-            Marca= marca,
-            Modelo = modelo,
-            Año = year,
-            Color = color
-            };
-    }
-
-    public void Update(string marca, string modelo, int year, string color)
-    {
-        Marca= marca;
-        Modelo = modelo;
-        Año = year;
-        Color = color;
-    }
+        Marca = datos.Marca,
+        Modelo = datos.Modelo,
+        Color = datos.Color,
+        Año = datos.Año
+    };
 }

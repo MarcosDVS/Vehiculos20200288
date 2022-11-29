@@ -1,71 +1,69 @@
+using Microsoft.EntityFrameworkCore;
 using Vehiculo20200288.Data.Context;
 using Vehiculo20200288.Data.Models;
-using Microsoft.EntityFrameworkCore;
+using Vehiculo20200288.Request;
+using Vehiculo20200288.Response;
+
 
 namespace Vehiculo20200288.Data.Services;
 
+public interface IVehiculoService
+{
+    Task<Result<List<VehiculoRecord>>> Consultar(string filtro);
+    Task<Result<int>> Registrar(VehiculoRequest datos);
+}
+
 public class VehiculoService : IVehiculoService
 {
-    private readonly IVEHICULO20200288DbContext _context;
-
-    public VehiculoService(IVEHICULO20200288DbContext context)
+    private VEHICULO20200288DbContext _database;
+    public VehiculoService(VEHICULO20200288DbContext database)
     {
-        _context = context;
+        _database = database;
     }
-
-    public async Task<Result<int>> Crear(string marca, string modelo, int year, string color)
+    //Tarea para registrar un Vehiculo nuevo en la base de datos...
+    public async Task<Result<int>> Registrar(VehiculoRequest datos)
     {
         try
         {
-            var vehiculo = Vehiculo.Crear(marca, modelo, year, color);
-            _context.Vehiculos.Add(vehiculo);
-            await _context.SaveChangesAsync();
+            var vehiculo = Vehiculo.Crear(datos);
+
+            _database.Vehiculos.Add(vehiculo);
+            await _database.SaveChangesAsync(new());
+
             return Result<int>.Success(vehiculo.VehiculoID);
         }
         catch (Exception E)
         {
-            return Result<int>.Failed(E.Message);
+            return Result<int>.Fail(E.Message);
         }
     }
-    public async Task<Result<List<Vehiculo>>> Consultar(string filtro = "")
+    //Tarea para consultar los vehiculos en la base de datos...
+    public async Task<Result<List<VehiculoRecord>>> Consultar(string filtro)
     {
         try
         {
+            //Se consulta en la base de datos segun el nombre del Vehiculo y el telefono.
+            var vehiculosDB =
+            await _database.Vehiculos.Where(vehiculo =>
+                (!string.IsNullOrEmpty(filtro) && (vehiculo.Marca.ToLower().Contains(filtro.ToLower())) || vehiculo.Modelo.Contains(filtro))
+            )
+            .Include(vehiculo=>vehiculo.Color
             
-            var vehiculos = await _context.Vehiculos
-            .Where(p=>p.Marca.Contains(filtro))
-            .ToListAsync();
-            
-            return Result<List<Vehiculo>>.Success(vehiculos);
+            )
+            .ToListAsync(new());
+            //Se convierten los datos para poder devolverlos.
+            var vehiculosMapeados = vehiculosDB.Select(c => new VehiculoRecord() { 
+                VehiculoID = c.VehiculoID, 
+                Marca = c.Marca, 
+                Modelo = c.Modelo
+                })
+                .ToList();
+            //Se devuelven los datos convertidos al tipo de dato esperado.
+            return Result<List<VehiculoRecord>>.Success(vehiculosMapeados);
         }
         catch (Exception E)
         {
-            return Result<List<Vehiculo>>.Failed(E.Message);
+            return Result<List<VehiculoRecord>>.Fail(E.Message);
         }
     }
-
-    public async Task Editar(int Id,string marca, string modelo, int year, string color){
-        var vehiculo = await _context.Vehiculos
-        .FirstOrDefaultAsync(p=>p.VehiculoID == Id);
-        if(vehiculo!=null){
-        vehiculo.Update(marca,modelo,year,color);
-        await _context.SaveChangesAsync();
-        }
-    }
-    public async Task Eliminar(int Id){
-        var vehiculo = await _context.Vehiculos
-        .FirstOrDefaultAsync(p=>p.VehiculoID == Id);
-        if(vehiculo!=null){
-        _context.Vehiculos.Remove(vehiculo);
-        await _context.SaveChangesAsync();
-        }
-    }
-}
-
-public interface IVehiculoService
-{
-    public Task<Result<int>> Crear(string marca, string modelo, int year, string color);
-    public Task<Result<List<Vehiculo>>> Consultar(string filtro = "");
-    public Task Editar(int Id,string marca, string modelo, int year, string color);
-    public Task Eliminar(int Id);
 }

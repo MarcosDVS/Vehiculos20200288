@@ -9,12 +9,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddScoped<IVehiculoService,VehiculoService>();
+#region Configuracion de la base de datos SQLite
+builder.Services.AddSqlite<VEHICULO20200288DbContext>("Data Source=.//Data//Context//MyDB.sqlite");
+builder.Services.AddScoped<IVEHICULO20200288DbContext,VEHICULO20200288DbContext>();
+#endregion
 builder.Services.AddSingleton<WeatherForecastService>();
-
-//Codigo necesario para MyDb.sqlite
-builder.Services.AddSqlite<VEHICULO20200288DbContext>("Data Source=.//Data//Context//VEHICULO20200288.sqlite");
-builder.Services.AddScoped <IVEHICULO20200288DbContext,VEHICULO20200288DbContext>();
+builder.Services.AddScoped<IVehiculoService,VehiculoService>();
 
 var app = builder.Build();
 
@@ -35,7 +35,6 @@ app.UseRouting();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
-//Codigo necesario para MyDb.sqlite
 var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
 using (var scope = scopeFactory.CreateScope())
 {

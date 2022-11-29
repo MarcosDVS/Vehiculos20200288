@@ -1,8 +1,10 @@
 {
   "ExpandedNodes": [
     "",
+    "\\Data",
+    "\\Data\\Models",
     "\\Pages"
   ],
-  "SelectedNode": "\\Vehiculo20200288.csproj",
+  "SelectedNode": "\\Pages\\VehiculosView.razor",
   "PreviewInSolutionExplorer": false
 }
