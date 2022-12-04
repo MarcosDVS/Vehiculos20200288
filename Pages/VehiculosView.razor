@@ -1,5 +1,8 @@
 @page "/vehiculo"
+@using Vehiculo20200288.Data.Models
+@using Vehiculo20200288.Data.Services
 
+<PageTitle>Lista De Vehiculos</PageTitle>
 <h1>Vehiculos</h1>
 <div class="row">
     <div class="col">
@@ -27,6 +30,13 @@
                 <td>@Vehiculo.Modelo</td>
                 <td>@Vehiculo.Color</td>
                 <td>@Vehiculo.Año</td>
+                <td>
+                    <div class="btn-group">
+                        <button class="btn btn-danger" >
+                            <span class="oi oi-trash" @onclick="()=>Eliminar(Vehiculo.VehiculoID)"></span>
+                        </button>
+                    </div>
+                </td>
             </tr>
         }
     </tbody> 
@@ -36,7 +46,8 @@
 {
     public string Filtro { get; set; } = "";
     public List<VehiculoRecord> Vehiculos { get; set; } = new List<VehiculoRecord>();
-        void Nuevo(){
+        void Nuevo()
+        {
             urlHelper.NavigateTo("/vehiculo/crear");
         }
     public async Task<bool> Consultar()
@@ -50,4 +61,11 @@
     {
         await Consultar();
     }
+    async Task Eliminar(int Id)
+    {
+        await VehiculoService.Eliminar(Id);
+        await Consultar();
+    }
+
+    public VehiculoRecord SelectCar { get; set; } = new VehiculoRecord();
 }

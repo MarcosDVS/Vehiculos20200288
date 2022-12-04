@@ -20,4 +20,4 @@ public class Result<TData> : Result, IResult<TData>
     public static Result<TData> Success(TData datos)=>new Result<TData>(){ Exitoso = true, Mensaje = string.Empty, Datos = datos};
     public static Result<TData> Success(TData datos,string mensaje = "")=>new Result<TData>(){ Exitoso = true, Mensaje = mensaje, Datos = datos};
     public static new Result<TData> Fail(string mensaje = "")=>new Result<TData>(){ Exitoso = false, Mensaje = mensaje};
-}
+} 

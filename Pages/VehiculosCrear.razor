@@ -6,7 +6,7 @@
 <PageTitle>Registrar Vehiculos</PageTitle>
 <h1>Registrar Vehiculos</h1>
 
-<EditForm Model="@Datos" OnInvalidSubmit="Registrar">
+<EditForm Model="@Datos" OnValidSubmit="Registrar">
 <DataAnnotationsValidator/>
 <ValidationSummary />
 <div class="row">
@@ -46,4 +46,5 @@
         }
         else Console.WriteLine(response.Mensaje);
     }
+    
 }

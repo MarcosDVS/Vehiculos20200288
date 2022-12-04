@@ -9,4 +9,4 @@ public interface IResult
 public interface IResult<TData>:IResult
 {
     public TData? Datos {get; set;}
-}
+} 

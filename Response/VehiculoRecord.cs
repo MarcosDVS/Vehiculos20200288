@@ -7,4 +7,4 @@ public class VehiculoRecord
     public string Modelo { get; set; } = null!;
     public int Año { get; set; }
     public string Color { get; set; } = null!;
-}
+} 

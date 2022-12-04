@@ -11,6 +11,8 @@ public interface IVehiculoService
 {
     Task<Result<List<VehiculoRecord>>> Consultar(string filtro);
     Task<Result<int>> Registrar(VehiculoRequest datos);
+    public Task Eliminar(int Id);
+    public Task Editar(int Id, string marca, string modelo, string color, int año);
 }
 
 public class VehiculoService : IVehiculoService
@@ -47,15 +49,14 @@ public class VehiculoService : IVehiculoService
             await _database.Vehiculos.Where(vehiculo =>
                 (!string.IsNullOrEmpty(filtro) && (vehiculo.Marca.ToLower().Contains(filtro.ToLower())) || vehiculo.Modelo.Contains(filtro))
             )
-            .Include(vehiculo=>vehiculo.Color
-            
-            )
             .ToListAsync(new());
             //Se convierten los datos para poder devolverlos.
             var vehiculosMapeados = vehiculosDB.Select(c => new VehiculoRecord() { 
                 VehiculoID = c.VehiculoID, 
                 Marca = c.Marca, 
-                Modelo = c.Modelo
+                Modelo = c.Modelo,
+                Color = c.Color,
+                Año = c.Año
                 })
                 .ToList();
             //Se devuelven los datos convertidos al tipo de dato esperado.
@@ -64,6 +65,24 @@ public class VehiculoService : IVehiculoService
         catch (Exception E)
         {
             return Result<List<VehiculoRecord>>.Fail(E.Message);
+        }
+    }
+    public async Task Eliminar(int Id)
+    {
+        var vehiculo = await _database.Vehiculos.FirstOrDefaultAsync(v=>v.VehiculoID == Id);
+        if(vehiculo!=null)
+        {
+        _database.Vehiculos.Remove(vehiculo);
+        await _database.SaveChangesAsync();
+        }
+    }
+     public async Task Editar(int Id, string marca, string modelo, string color, int año)
+    {
+        var vehiculo = await _database.Vehiculos.FirstOrDefaultAsync(v=>v.VehiculoID == Id);
+        if(vehiculo!=null)
+        {
+        vehiculo.Update(marca,modelo,color,año);
+        await _database.SaveChangesAsync();
         }
     }
 }
